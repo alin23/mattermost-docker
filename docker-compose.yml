@@ -12,6 +12,7 @@ services:
   db:
     build: db
     image: alinpanaitiu/mattermost-db:latest
+    container_name: mattermost-db
     read_only: true
     restart: unless-stopped
     volumes:
@@ -37,6 +38,7 @@ services:
       #   - PGID=1000
       #   - MM_VERSION=5.31
     image: alinpanaitiu/mattermost:latest
+    container_name: mattermost
     restart: unless-stopped
     volumes:
       - mattermost-config:/mattermost/config:rw
