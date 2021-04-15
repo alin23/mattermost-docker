@@ -5,11 +5,11 @@ ENV PATH="/mattermost/bin:${PATH}"
 ENV MM_INSTALL_TYPE=docker
 
 # Build argument to set Mattermost edition
-ARG edition=enterprise
+ARG edition=team
 ARG PUID=2000
 ARG PGID=2000
 ARG MM_BINARY=
-ARG MM_VERSION=5.31.0
+ARG MM_VERSION=5.33.3
 
 
 # Install some needed packages
