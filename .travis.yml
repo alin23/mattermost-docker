@@ -1,6 +1,8 @@
+language: python
 dist: focal
 before_install:
-  - sudo apt-get -y install jq docker-compose
+  - sudo apt-get -y install jq
+  - sudo pip install -U docker-compose
 services:
   - docker
 matrix:
