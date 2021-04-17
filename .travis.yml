@@ -21,7 +21,7 @@ env:
   global:
     - IMAGE=alinpanaitiu/mattermost
     - STACK=mattermost
-    - UPDATE_COMMAND="docker-compose pull; docker-compose --env-file stack.env up -d"
+    - UPDATE_COMMAND="docker-compose pull; docker-compose -p mattermost --env-file stack.env up -d"
     - RESTART=false
     - ASYNC=false
     - secure: "Co0UXOmtrQ3t4JEYwRJcLE/htQLXqcZkSowEnoHUh1K1t23i0TnpMbM9GmllmgI204d/8AokEXmtLQkbbf+MyszFt+mPoExtzpC1w3FQZukNuYC1T/IfeBaheoiwx8wNicWPWBg4Iz15xtUiYo3i/IBU3ytuxF+GeV1SXpKFyt9EHWlUHUK4eU6XnfMJduwmajpst/e97IHp1yCq/mP7Re4KcILrcNJgESasgBVRJQVVo0c6g6sEptKU/uLCE1RGcEP0NqCgpxzYV89lIRorKfWYbb5nNtjX5bsMz2tCgL+3ioRtxKLGSR905vrtirUzSx52+f5CQZQV7yalntxwgeyw0grB96Mi6V/joqmrAIO+nb2QemyJnGGvMI8SpLM4K6YDbe6EEok2sHAvI0aL0Kiv5hcqQxtindEQXKTDDpnZyG8nhUcQH7OSl4odLLSmZNygKQvhTrA0fbKn+Kjoo5OPOCKh+ZNz7uLpw5jNMi/IuOQ6xdoqq8AB+Vyq6XlWkpzeO1LS4A+/2QYjCz/oMhwxiaPwLGd+FuCgYPmc4k99HLLPO3+d/W1V0F/jmnET+Yoz2AuIOxWu2Z8kLhz1/9pj6wUS/7e/Q5LqPUayu4ShNGe7ev0Papxum24+e0YmXY3V2BwmDARHqg2P8wZ+W7T+eKMBmNHvgS3ZIPXID8I="
