@@ -6,3 +6,6 @@
 
 # Generated data
 volumes
+.gitsecret/keys/random_seed
+!*.secret
+.env

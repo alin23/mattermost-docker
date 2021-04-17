@@ -1,22 +1,28 @@
-services:
-    - docker
-
+dist: focal
 before_install:
-    - docker build -t mattermost-prod-db db
-    - docker build -t mattermost-prod-app app
-
-install:
-    - eval $BUILD
-    - sleep 30
-
+  - sudo apt-get -y install jq docker-compose
+services:
+  - docker
+matrix:
+  include:
+    - install:
+        - echo "$DOCKER_PASSWORD" | docker login -u alinpanaitiu --password-stdin
+        - TAG=$TRAVIS_COMMIT docker-compose build
+        - test "$TRAVIS_BRANCH" = "master" -o "$TRAVIS_BRANCH" = "main" && docker tag alinpanaitiu/mattermost:$TRAVIS_COMMIT alinpanaitiu/mattermost:latest && docker tag alinpanaitiu/mattermost-db:$TRAVIS_COMMIT alinpanaitiu/mattermost-db:latest || true
+      script:
+        - docker images
+deploy:
+  provider: script
+  script: bash deploy.sh
+  on:
+    repo: alin23/mattermost-docker
+    all_branches: true
 env:
-    - BUILD="mkdir -p ./volumes/app/mattermost/{data,logs,config,plugins} && docker-compose up -d"
-    - BUILD="docker run -d --name db -e POSTGRES_USER=mmuser -e POSTGRES_PASSWORD=mmuser_password -e POSTGRES_DB=mattermost mattermost-prod-db && sleep 5 && docker run -d --link db -p 80:8000 --name app -e MM_USERNAME=mmuser -e MM_PASSWORD=mmuser_password mattermost-prod-app"
-
-script:
-    - curl -sSf http://localhost > /dev/null
-    - docker ps -a | grep app | grep healthy
-    - docker ps -a | grep db | grep healthy
-
-after_failure:
-    - timeout 3s docker-compose logs app db web
+  global:
+    - IMAGE=alinpanaitiu/mattermost
+    - STACK=mattermost
+    - UPDATE_COMMAND="docker-compose pull; docker-compose --env-file stack.env up -d"
+    - RESTART=false
+    - ASYNC=false
+    - secure: "Co0UXOmtrQ3t4JEYwRJcLE/htQLXqcZkSowEnoHUh1K1t23i0TnpMbM9GmllmgI204d/8AokEXmtLQkbbf+MyszFt+mPoExtzpC1w3FQZukNuYC1T/IfeBaheoiwx8wNicWPWBg4Iz15xtUiYo3i/IBU3ytuxF+GeV1SXpKFyt9EHWlUHUK4eU6XnfMJduwmajpst/e97IHp1yCq/mP7Re4KcILrcNJgESasgBVRJQVVo0c6g6sEptKU/uLCE1RGcEP0NqCgpxzYV89lIRorKfWYbb5nNtjX5bsMz2tCgL+3ioRtxKLGSR905vrtirUzSx52+f5CQZQV7yalntxwgeyw0grB96Mi6V/joqmrAIO+nb2QemyJnGGvMI8SpLM4K6YDbe6EEok2sHAvI0aL0Kiv5hcqQxtindEQXKTDDpnZyG8nhUcQH7OSl4odLLSmZNygKQvhTrA0fbKn+Kjoo5OPOCKh+ZNz7uLpw5jNMi/IuOQ6xdoqq8AB+Vyq6XlWkpzeO1LS4A+/2QYjCz/oMhwxiaPwLGd+FuCgYPmc4k99HLLPO3+d/W1V0F/jmnET+Yoz2AuIOxWu2Z8kLhz1/9pj6wUS/7e/Q5LqPUayu4ShNGe7ev0Papxum24+e0YmXY3V2BwmDARHqg2P8wZ+W7T+eKMBmNHvgS3ZIPXID8I="
+    - secure: "iKT/XnZVuitbr7yP8XwC2WA3pDFSv4lFxfXeqa18wsA+DPjafJySMvLIhPdxs2Dftsrn/ruuaj/VnxZpeljWCrg6g+/cqLiE74b3sGfXublYfEnV7G+KygLbxyFqaoAvmBMqtdw9jkNoa/GXvtYUaDuLPFP3ubR2SKYiRyLSH6z4nJ7sLrTlXTeGGNVdi9WVwnRN6YiIhdt0ZtzfqoGvCSqAGYmiOlNdoLnoUBFHwCjjkPAWNIm1vwU8TFsuuFOo/DmAxpkXGmTxMlJOzHJdkK9xLCQUg55btLR+aFiFTNM3ReU90JGDYsOLTUYm8RYTAiTyAufuxOt5DMc8ZloAj3UYul52FpXvI9CEa58T5Gz2qGGIUe5Hh3wMhHNhawd25E9wnZMn0DhaCxPJDbwsbD5JjyOdqHQiwFgbP0K0dMqXWReumWFsbtx89050O5hyo733V8FRvH1YwgzS9brrAab5wIxygQk5n4wGUV9Tv6ItaG3WQtolY4y+OWJ+fXdG0Dcd5eh7O8UPkU5BTHrnb6suNNAk6XrnsU/O/RuZZhaJuWmoJi5HhBXkKPagbh3jFFr1Qaaj7fgPn8w3zaTauNIPWom3VkiUs+AM0jrxXWSWdWJoFxFIxb1bFMb7ImaYHGgLw8TJtMoU70CzweYwzje3G2IRv8KguLPYdhXSgsc="
