@@ -1,5 +1,16 @@
 version: "3.8"
 
+x-refs:
+  restart: &restart
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      rollback_config:
+        parallelism: 2
+      update_config:
+        parallelism: 2
+
 volumes:
   db:
   data:
@@ -19,7 +30,7 @@ services:
     image: alinpanaitiu/mattermost-db:${TAG:-latest}
     container_name: mattermost-db
     read_only: true
-    restart: unless-stopped
+    <<: *restart
     volumes:
       - db:/var/lib/postgresql/data
       - /etc/localtime:/etc/localtime:ro
@@ -44,7 +55,7 @@ services:
         - alinpanaitiu/mattermost:latest
     image: alinpanaitiu/mattermost:${TAG:-latest}
     container_name: mattermost
-    restart: unless-stopped
+    <<: *restart
     volumes:
       - config:/mattermost/config:rw
       - data:/mattermost/data:rw
