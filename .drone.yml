@@ -1,0 +1,63 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+  - name: docker
+    image: plugins/docker
+    settings:
+      context: app
+      dockerfile: app/Dockerfile
+      auto_tag: true
+      build_args:
+        - edition=team
+        - MM_VERSION=5.34.2
+        - BUILDKIT_INLINE_CACHE=1
+      password:
+        from_secret: docker_password
+      repo: alinpanaitiu/mattermost
+      username: alinpanaitiu
+      purge: false
+      cache_from:
+        - alinpanaitiu/mattermost:latest
+
+  - name: docker-db
+    image: plugins/docker
+    settings:
+      context: db
+      dockerfile: db/Dockerfile
+      auto_tag: true
+      build_args:
+        - BUILDKIT_INLINE_CACHE=1
+      password:
+        from_secret: docker_password
+      repo: alinpanaitiu/mattermost-db
+      username: alinpanaitiu
+      purge: false
+      cache_from:
+        - alinpanaitiu/mattermost-db:latest
+
+  - name: deploy
+    image: curlimages/curl
+    commands:
+      - curl -L -s -S https://alin:$${DEPLOY_PASSWORD}@deploy.darkwoods.win/mattermost
+    environment:
+      DEPLOY_PASSWORD:
+        from_secret: deploy_password
+    when:
+      branch:
+        - master
+    depends_on:
+      - docker
+      - docker-db
+
+---
+kind: signature
+hmac: 8885aee75de0f47b3cd6bfe045168a2c41bad7681f426a64780f7ece49549b5c
+
+...

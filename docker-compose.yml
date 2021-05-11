@@ -14,6 +14,7 @@ x-refs:
 volumes:
   db:
   data:
+  matterllo:
   config:
   logs:
   plugins:
@@ -79,3 +80,16 @@ services:
       - MM_SQLSETTINGS_DATASOURCE=postgres://mmuser:${POSTGRES_PASSWORD}@db:5432/mattermost?sslmode=disable&connect_timeout=10
       # in case your config is not in default location
       #- MM_CONFIG=/mattermost/config/config.json
+
+  matterllo:
+    image: alinpanaitiu/matterllo
+    container_name: matterllo
+    <<: *restart
+    volumes:
+      - matterllo:/home/matterllo/data:rw
+    ports:
+      - "8076:8000"
+    environment:
+      SECRET:
+      TRELLO_APIKEY:
+      TRELLO_TOKEN:

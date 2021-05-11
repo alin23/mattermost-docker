@@ -1,2 +1,0 @@
-#!/bin/bash
-docker build --build-arg BUILDKIT_INLINE_CACHE=1 --build-arg edition=team --build-arg MM_VERSION="$(test $SOURCE_BRANCH != master && echo ${SOURCE_BRANCH#v} || echo $VERSION)" --cache-from $DOCKER_REPO:latest -f $DOCKERFILE_PATH -t $IMAGE_NAME .
