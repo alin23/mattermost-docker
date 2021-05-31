@@ -7,6 +7,9 @@ platform:
   os: linux
   arch: amd64
 
+environment:
+  DOCKER_BUILDKIT: "1"
+
 steps:
   - name: docker
     image: plugins/docker
@@ -16,7 +19,7 @@ steps:
       auto_tag: true
       build_args:
         - edition=team
-        - MM_VERSION=5.34.2
+        - MM_VERSION=5.35.2
         - BUILDKIT_INLINE_CACHE=1
       password:
         from_secret: docker_password
@@ -56,8 +59,35 @@ steps:
       - docker
       - docker-db
 
+  - name: cloudflare
+    image: jetrails/drone-cloudflare-caching
+    settings:
+        api_token:
+            from_secret: cloudflare_cache_purge_token
+        zone_identifier: b10f3c851da045daad551b39f76c0870
+        action: purge_everything
+    when:
+        branch:
+            - master
+    depends_on:
+      - deploy
+
+  - name: notify
+    image: drillster/drone-email
+    settings:
+        host: smtp.gmail.com
+        username: alin.panaitiu
+        password:
+            from_secret: gmail_password
+        from: drone@darkwoods.win
+    when:
+        status: [success, failure]
+    depends_on:
+      - deploy
+
+
 ---
 kind: signature
-hmac: 8885aee75de0f47b3cd6bfe045168a2c41bad7681f426a64780f7ece49549b5c
+hmac: c3fec88bffe98d28e0b96d652564bb50368b3ddeb9c69e475755b752bc6eeb73
 
 ...
