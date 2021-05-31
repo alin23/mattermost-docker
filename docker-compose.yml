@@ -51,7 +51,7 @@ services:
       args:
         - BUILDKIT_INLINE_CACHE=1
         - edition=team
-        - MM_VERSION=5.35.2
+        - MM_VERSION=5.35.1
       cache_from:
         - alinpanaitiu/mattermost:latest
     image: alinpanaitiu/mattermost:${TAG:-latest}

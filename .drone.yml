@@ -19,7 +19,7 @@ steps:
       auto_tag: true
       build_args:
         - edition=team
-        - MM_VERSION=5.35.2
+        - MM_VERSION=5.35.1
         - BUILDKIT_INLINE_CACHE=1
       password:
         from_secret: docker_password
@@ -88,6 +88,6 @@ steps:
 
 ---
 kind: signature
-hmac: c3fec88bffe98d28e0b96d652564bb50368b3ddeb9c69e475755b752bc6eeb73
+hmac: 4efc62ebd3c75854cdcad5f365b2814186640cec7075c23ebdb8c4d72d432e5b
 
 ...
